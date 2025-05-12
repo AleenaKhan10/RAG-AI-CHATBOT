@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 interface Message {
     role: 'user' | 'ai';
@@ -6,15 +6,24 @@ interface Message {
     timestamp: string;
 }
 
-const AIChat = () => {
-    const [input, setInput] = useState('');
-    const [messages, setMessages] = useState<Message[]>([{
+export interface AIChatHandle {
+    clearChat: () => void;
+}
+
+const AIChat = forwardRef<AIChatHandle>((props, ref) => {
+    const initialMessage: Message = {
         role: 'ai',
         content: 'Hello! How can I assist you today?',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }]);
+    };
+    const [input, setInput] = useState('');
+    const [messages, setMessages] = useState<Message[]>([initialMessage]);
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        clearChat: () => setMessages([initialMessage])
+    }));
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -128,6 +137,6 @@ const AIChat = () => {
             </form>
         </div>
     );
-};
+});
 
 export default AIChat; 
