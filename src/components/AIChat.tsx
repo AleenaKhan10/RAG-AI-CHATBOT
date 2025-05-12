@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 interface Message {
     role: 'user' | 'ai';
@@ -10,7 +10,7 @@ export interface AIChatHandle {
     clearChat: () => void;
 }
 
-const AIChat = forwardRef<AIChatHandle>((props, ref) => {
+const AIChat = forwardRef<AIChatHandle, {}>((props, ref) => {
     const initialMessage: Message = {
         role: 'ai',
         content: 'Hello! How can I assist you today?',
@@ -48,11 +48,12 @@ const AIChat = forwardRef<AIChatHandle>((props, ref) => {
             session_id: "user_1"
         };
 
+        const token = import.meta.env.VITE_ASTRA_TOKEN;
         const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer AstraCS:SiXEJwAvwaiGPmWuLXUKWQUU:9abc326d59da8c1f8c291945c88b47776aa0c584dda871b9c9d0953b8f1d8871'
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(payload)
         };
